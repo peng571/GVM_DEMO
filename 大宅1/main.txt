@@ -1,0 +1,7 @@
+﻿storyname: 大宅
+[引用] ../instruction.yaml
+[引用] instruction.yaml
+[引用] 物品分組.txt
+[引用] 情節-狗屋.txt
+[引用] 情節-棺木.txt
+[引用] 情節-小型遭遇戰.txt

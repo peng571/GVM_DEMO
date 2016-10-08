@@ -1,0 +1,91 @@
+[指令集] 1
+  Condit function AttrNumberComp(attr:str, comp:str, value:float):
+    ~ '^\$(?P<attr>[^ ]+) (?P<comp>>|<|=) (?P<value>\d+(.\d+)?)$'
+    if comp == '<':return $*attr < value
+    if comp == '>':return $*attr > value
+    if comp == '=':return $*attr == value
+
+  Condit function LocaleAttrNumberComp(attr:str, comp:str, value:float):
+    ~ '^\\@(?P<attr>[^ ]+) (?P<comp>>|<|=) (?P<value>\d+(.\d+)?)$'
+    if comp == '<':return @*attr < value
+    if comp == '>':return @*attr > value
+    if comp == '=':return @*attr == value
+  
+  React function SetAttrNumber(attr:str, value:float):
+    ~ '^\$(?P<attr>[^ ]+) = (?P<value>\d+(.\d+)?)$'
+    vm.setProp(attr, value)
+
+  Condit function Pass(): 
+    ~ '通過'
+    bool($result)
+
+  Condit function Failure(): 
+    ~ '失敗'
+    not bool($result)
+
+  Condit function IntMatch(match:int):
+    ~ '^(?P<match>\d+)$'
+    match == $result
+
+  Condit function IntRange(begin:int, end:int):
+    ~ '^(?P<begin>\d+)\-(?P<end>\d+)$'
+    begin <= $result <= end
+
+  Condit function IntMax(maximal:int):
+    ~ '^(?P<maximal>\d+)\-$'
+    maximal >= $result
+
+  Condit function IntMin(minimal:int):
+    ~ '^(?P<minimal>\d+)\+$'
+    minimal <= $result
+
+  Condit function HasStatus(status:str):
+    ~ '^有狀態 (?P<status>\S*)$'
+    vm.hasStatus(status)
+
+  Condit function NotHasStatus(status:str):
+    ~ '^無狀態 (?P<status>\S*)$'
+    not vm.hasStatus(status)
+  
+  React function AddStatus(status:str):
+    ~ '^附加狀態 (?P<status>\S*)$'
+    vm.addStatus(status)
+
+  React function RemoveStatus(status:str):
+    ~ '^移除狀態 (?P<status>\S*)$'
+    vm.removeStatus(status)
+
+  React function Noop():
+    Pass
+
+  React function CallEvent(event:str)
+    ~ '事件-(?P<event>.*)$'
+    vm.callEvent(event)
+
+  React function Assignment(property:str, expr:str):
+    ~ '^\$(?P<property>[^=\s]+)\s*=\s*(?P<expr>.*)$'
+    vm.setProp(property, eval(expr))
+    
+  React function LocalAssignment(property:str, expr:str):
+    ~ '^\\@(?P<property>[^=\s]+)\s*=\s*(?P<expr>.*)$'
+    vm.setLocaleProp(property, eval(expr))
+
+  React function Desc(content:str):
+    ~ '字幕$'
+    ~ '^[<] (?P<content>.*)$'
+    vm.print_(content.format(**vm.properties))
+
+  React function Damage(damage:int):
+    ~ '受傷$'
+    ~ '受傷 (?P<damage>\d+)$'
+    ~ '獲得(?P<damage>\d+)級速度'
+    ~ '失去(?P<damage>\d+)級速度'
+    ~ '失去(?P<damage>\d+)級力量'
+    vm.alterProp('health', -damage)
+    vm.print_('受到{0}傷害'.format(damage))
+
+  React function SpeedChallenge(level:int):
+    ~ '速度檢定$'
+    ~ '速度檢定 (?P<level>\d+)$'
+    vm.setProp('result', random.random() < 0.3)
+

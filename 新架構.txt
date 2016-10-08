@@ -1,0 +1,167 @@
+全域
+  properties
+  effects(formula)
+  events
+  
+狀態
+  reacts(conseqs)(attribs)
+  properties
+  effects
+  events
+
+區塊
+  atom?
+  condits?
+  (X)reacts(conseqs)(attribs)(options)
+  blocks
+
+
+先判斷condits來決定要不要進入這個區塊
+進入區塊之後依照attribs建立變數
+再來依序執行reacts
+最後從判斷options的condits來判斷可選擇性
+如果有選擇讓玩家選擇
+否則就執行default options
+
+basereact
+basecondit
+
+[block] -> 
+react -> [block]
+option -> [block] + title(name) + default(bool)?
+event -> [block] + whens(listens)
+
+status -> [block] + tags + itemname(name) + effects + events + as_item(bool)?
+plot -> [status or block]
+
+
+!! 小心 events 引起的無限迴圈
+
+
+## 整個語法由條目所組成
+每個條目有key與value
+key一定是string, 由key的樣式來判斷要交給哪個Builder處理
+value只有一定是list或是null
+
+當value的list中, list中的項目有以下幾種可能
+1. item是map:
+  1. item是他的子條目, 這個樣式也形成了block
+  2. item是他的屬性
+2. item是scalar時, 只有以下一種可能
+  1. item是他的子條目
+
+!注意: 條目的value一定是list, 但屬性的value則可以是任意字串或型別
+
+當item是屬性又可大略分兩種
+1. item是賦值動作
+2. item代表父條目的屬性
+實際上的行為由CreatorType決定
+
+問題? 子條目建立之後要加入到父條目的哪個屬性要由誰決定CreatorType?Builder?
+問題? 單個條目可以展開成多個條目??
+
+
+
+
+## react
+空白react代表區塊
+
+
+## condit
+
+並列的條件代表AND
+[條件]
+[條件]
+判斷式成立才 1.執行子邏輯 2.執行下一則邏輯
+否則 整個判斷為false
+
+這個代表OR
+[符合]
+[符合] 
+判斷式不成立才 1.執行子邏輯 2.執行下一則邏輯
+否則 整個判斷為true
+
+
+a and b
+1. [條件] a
+    [條件] b
+2. [條件] a [條件] b
+3. 3. [?] a & b
+
+
+a or b
+1. [符合] a
+     [符合] b
+2. [符合] a [符合] b
+3. [?] a | b
+
+(a or b) and c
+[條件] 
+  [符合] a
+  [符合] b
+[條件] c
+
+(a and b) or c
+[符合] 
+  [條件] a
+  [條件] b
+[符合] c
+
+
+## status
+FIFO string list
+
+
+## tag
+階層式tag?
+是一個set()也代表類別
+可以實作mixin
+
+
+## formula, effect
+getter 
+取值時進行計算
+
+
+
+## adjust
+(X)setter (USE)when
+在存值前進行計算
+
+
+## events
+FIFO queue
+flush after plot_end | block_end
+
+
+## when
+when $a : 當a變動時, before, after
+when $a > 1: 當a變動且大於1時, before, after
+when [after in status]
+when [before out status]
+when [end plot]
+when [trigger event]
+
+1. 當數值變動時, 執行某些內容
+2. 特定條件達成時, 執行某些內容
+執行時機:
+1. 強制插入(這可以拿來實做function call)
+2. 強制插入, 或等待原子區塊結束(default)
+3. 總是等待區塊結束
+(X)4. 總是等待情結結束後加入序列
+
+
+## plot
+FIFO queue
+
+
+## loop(foreach)
+語意大概是這樣: 對所有的XX做
+
+## template
+[樣板] name
+  ${func1}
+  ${func2}
+
+[套用] name{func1: XXX, func2: XXX2}
+

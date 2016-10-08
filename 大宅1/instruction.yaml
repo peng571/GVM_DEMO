@@ -1,0 +1,102 @@
+[指令集] 1
+  Condit function RandomChoice(percent:int)
+    ~ 'R(?P<percent>[0-9][0-9])\s*(\-\-.*)?$'
+    obj['base'] < $R100 < obj['base'] + percent
+
+  Condit function RandomChoiceWithVariant(percent:int, variant:str)
+    ~ 'R(?P<percent>[0-9][0-9])\s+變體-(?P<variant>[^ ]+)\s*(\-\-.*)?$'
+    (obj['base'] < $R100 < obj['base'] + percent) and ($variant == variant or variant == '無')
+
+  Condit function SelectVariant(variant:str)
+    ~ '變體-(?P<variant>.*)$'
+    $variant == variant
+  
+  React function setRandom()
+    ~ '設定亂數$'
+    r = int(random.random() * 100) + 1
+    vm.setProp('R100', r)
+
+  React function SetVariant(variant:str)
+    ~ '變體-(?P<variant>.*)$'
+    vm.setProp('variant', variant)
+  
+  React function SetNextPlot(plot:str)
+    ~ '下個情節-(?P<plot>\S+)\s*$'
+    vm.setProp('nextPlot', plot)
+    vm.setProp('variant', '')
+  
+  React function SetNextPlotWithVariant(plot:str, variant:str)
+    ~ '下個情節-(?P<plot>\S+)\s+變體-(?P<variant>\S+)\s*$'
+    vm.setProp('nextPlot', plot)
+    vm.setProp('variant', variant)
+
+  React function ChangePoint(hp:int, hp_max:int=0, mp:int, mp_max:int=0)
+    ~ '變化 (?P<hp>([+-][0-9]+|0))(/(?P<hp_max>([+-][0-9]+|0)))? (?P<mp>([+-][0-9]+|0))(/(?P<mp_max>([+-][0-9]+|0)))?\s*$'
+    vm.alterProp('hp', hp)
+    vm.alterProp('hp_max', hp_max)
+    vm.alterProp('mp', mp)
+    vm.alterProp('mp_max', mp_max)
+  
+  React function ChangePointWithDesc(hp:int, hp_max:int=0, mp:int, mp_max:int=0, desc:str)
+    ~ '變化 (?P<hp>([+-][0-9]+|0))(/(?P<hp_max>([+-][0-9]+|0)))? (?P<mp>([+-][0-9]+|0))(/(?P<mp_max>([+-][0-9]+|0)))? (?P<desc>.*)$'
+    |
+    descs = []
+    if hp < 0:
+      descs.append('你失去了 {} 點體力'.format(-hp))
+    if hp > 0:
+      descs.append('你恢復了 {} 點體力'.format(hp))
+    if hp_max < 0:
+      descs.append('你遭受了 {} 點傷害'.format(-hp_max))
+    if hp_max > 0:
+      descs.append('你恢復了 {} 點傷害'.format(hp_max))
+    if mp_max > 0:
+      descs.append('你恢復了 {} 點精神傷害'.format(mp_max))
+    elif mp > 0:
+      descs.append('你恢復了 {} 點精神'.format(mp))
+    if mp_max < 0:
+      descs.append('你遭受了 {} 點精神傷害'.format(-mp_max))
+    elif mp < 0:
+      descs.append('你失去了 {} 點精神'.format(-mp))
+    vm.print_(desc.format(hp, hp_max, mp, mp_max, desc=', '.join(descs)))
+    vm.alterProp('hp', hp)
+    vm.alterProp('hp_max', hp_max)
+    vm.alterProp('mp', mp)
+    vm.alterProp('mp_max', mp_max)
+
+  Condit function HasItem(item:str):
+    ~ '^有物品 (?P<item>\S*)$'
+    vm.hasStatus(item)
+
+  Condit function NotHasItem(item:str):
+    ~ '^無物品 (?P<item>\S*)$'
+    not vm.hasStatus(item)
+
+  React function GiveItem(item:str)
+    ~ '^獲得 (?P<item>.+)$'
+    vm.addItem(item)
+  
+  React function UseItem(item:str)
+    ~ '^(消耗|使用) (?P<item>[^ ]+)'
+    vm.removeItem(item)
+    vm.print_('消耗掉手中的{}了'.format(item))
+
+  React function DoItem()
+    ~ '^處置使用的物品$'
+    |
+    if local['it']['用法'] == '消耗':
+      vm.removeItem(local['it']['名稱'])
+      vm.print_('消耗掉手中的{}了'.format(local['it']['名稱']))
+
+  -- React function UseItemWithSkill(item:str, skill:str, level:int)
+  --  ~ '^使用 (?P<item>[^ ]+) 做 (?P<skill>[^0-9]+)(?P<level>[1-9])$'
+  --  /_item = vm.status_database[item]
+  --  /vm.removeItem(item)
+  --  /if skill in _item['skills'] and 
+  
+  Iter function ItemSkillMatch(skill:str, level:int)
+    ~ '技能.(?P<skill>[^0-9]+)(?P<level>[1-9])'
+    |
+    for item in vm.iterItem():
+      if skill in item['skills'] and item['skills'][skill]['level'] >= level:
+        burnout = item['skills'][skill]['burnout']
+        yield {'用法':('消耗' if burnout else '使用'), '名稱':item['name']}

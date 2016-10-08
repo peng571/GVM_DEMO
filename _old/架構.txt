@@ -1,0 +1,64 @@
+class 條件
+  _name
+  **attrs
+  eval_()
+語法: C(**attrs)
+
+class 動作
+  _action_desc
+  _name
+  act()
+  **attrs
+語法: A(**attrs)
+
+class 反應
+  condition
+  desc
+  actions
+語法: ((COND!))*desc((!ACTION))+
+
+class 選項
+  condition
+  desc
+  reacts
+語法: 選項 ((COND.))*desc:
+        - REACT
+        - REACT
+
+class 狀態
+  timeout
+  cums
+
+語法1: 狀態:
+語法2: [$((((#))?NAME-n))+]
+
+class 情結
+  name
+  desc
+  options
+  statues
+  similars
+
+語法 ((情結|相似)) NAME ((|?INIT))?((|#TAG))*:
+  - DESC
+  - SUB
+  - SUB
+
+
+連續情結(n:m)
+狀態情結
+相似情結
+
+
+雙手併攏舀滿水喝下:
+  20: [這水有毒, !!DamageReact [10]]
+  80: [治療了你, !!DamageReact [-1]]
+
+  
+## 語法
+
+- &湖泊
+  - 
+  喝水:
+  游泳: !!cont
+    

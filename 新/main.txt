@@ -1,0 +1,5 @@
+﻿storyname: 新
+[引用] ../instruction.yaml
+[引用] instruction.yaml
+[引用] 00開始.txt
+[引用] 01.txt
