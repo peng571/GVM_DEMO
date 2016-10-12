@@ -1,4 +1,4 @@
-storyname: 新
+﻿storyname: 新
 [引用] ../instruction.yaml
 [引用] instruction.yaml
 [引用] 情節-00開始.txt

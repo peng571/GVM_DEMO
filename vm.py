@@ -1,4 +1,4 @@
-import random
+﻿import random
 from collections import OrderedDict
 from wcwidth import wcswidth
 from inputview import Inputer, NumberCommand, OneCharCommand
