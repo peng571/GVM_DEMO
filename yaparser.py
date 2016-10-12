@@ -264,7 +264,6 @@ class RootMaker(Maker):
             Builder('$[預設] ', 'reacts', OptionCreatorType, behaviors=[AsNameBehavior()], extra_attribs=OrderedDict([('default', True)])),
             Builder('$[後果] ', 'reacts', BlockCreatorType, behaviors=[condit_ksub_behavior]),
             
-            
             Builder('$[事件] ', 'events', EventCreatorType, behaviors=[AsNameBehavior(), short_behavior], minor_spliters=['[']),
             Builder('$[影響] ', 'effects', EffectCreatorType, behaviors=[condit_ksub_behavior],
                     extra_attribs=OrderedDict([('condits', [])])),
@@ -292,12 +291,12 @@ class RootMaker(Maker):
 # data = yaml.compose('sample2.yaml', ProcessLoader)
 # print(yaml_to_node(data))
 
-maker = RootMaker()
-root = maker.parse('大宅1/main.txt')
-import pprint
-pp = pprint.PrettyPrinter(indent=1)
-pp.pprint(root)
-pp.pprint(maker.CONDIT)
-pp.pprint(maker.REACT)
-pp.pprint(maker.ITER)
+# maker = RootMaker()
+# root = maker.parse('cpy/main.txt')
+# import pprint
+# pp = pprint.PrettyPrinter(indent=1)
+# pp.pprint(root)
+# pp.pprint(maker.CONDIT)
+# pp.pprint(maker.REACT)
+# pp.pprint(maker.ITER)
 

@@ -1,4 +1,4 @@
-﻿import random
+import random
 from collections import OrderedDict
 from wcwidth import wcswidth
 from inputview import Inputer, NumberCommand, OneCharCommand
@@ -458,9 +458,9 @@ if __name__ == '__main__':
     vm.status_database = OrderedDict((p['name'], p) for p in maker.root['statuses'])
     vm.status_database.update( OrderedDict((p['name'], p) for p in maker.root['plots']) )
     
-    vm.setProp('nextPlot', '小型遭遇戰')
-    vm.addStatus('公用')
-    vm.forever()
+    # vm.setProp('nextPlot', '小型遭遇戰')
+    # vm.addStatus('公用')
+    vm.next()
 
     # while vm.next():
         # print('-'*50)
